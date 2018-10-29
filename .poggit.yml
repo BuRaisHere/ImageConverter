@@ -4,4 +4,5 @@ branches:
 projects:
   ImageConverter:
     path: ""
+    icon: "/assets/icon.png"
 ...
