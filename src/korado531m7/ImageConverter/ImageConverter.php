@@ -84,37 +84,11 @@ class ImageConverter extends PluginBase{
                     $sender->sendMessage('==========================');
                 break;
                 
-                case 'cancel':
-                case 'c':
-                    if(empty($params[1])){
-                        $sender->sendMessage('/convert canceltask <taskid>');
-                    }else{
-                        if(preg_match('/[0-9]/',$params[1])){
-                            $int = ((int) $params[1]);
-                            $task = null;
-                            foreach(self::$workingTask as $alltasks){
-                                if($alltasks->getTaskId() == $int){
-                                    $task = $alltasks;
-                                }
-                            }
-                            if($task === null){
-                                $sender->sendMessage('Task not found');
-                            }else{
-                                self::removeTask($task);
-                                $this->getServer()->getAsyncPool()->removeTask($task,true);
-                            }
-                        }else{
-                            $sender->sendMessage('Task id must be an integer');
-                        }
-                    }
-                break;
-                
                 default:
                     $sender->sendMessage('==== Image Converter ====');
                     $sender->sendMessage('/convert image <filename> - Convert image into block');
                     $sender->sendMessage('/convert image-list - List of image in folder');
                     $sender->sendMessage('/convert list - Show working task list');
-                    $sender->sendMessage('/convert cancel <taskid> - Cancel converting');
                     $sender->sendMessage('=========================');
                 break;
             }

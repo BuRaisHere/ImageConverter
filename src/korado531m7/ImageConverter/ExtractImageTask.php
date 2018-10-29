@@ -16,7 +16,7 @@ class ExtractImageTask extends AsyncTask{
         $this->task = 0;
     }
     
-    public function onRun() : void{
+    public function onRun(){
         $result = ImageAPI::convertImage($this->path,$this);
         $this->setResult($result);
     }
@@ -33,8 +33,7 @@ class ExtractImageTask extends AsyncTask{
         $this->task = $float;
     }
     
-    public function onCompletion() : void{
-        $server = Server::getInstance();
+    public function onCompletion(Server $server){
         $sender = $server->getPlayer($this->sender);
         ImageConverter::removeTask($this);
         if($sender instanceof Player){

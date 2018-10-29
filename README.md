@@ -18,7 +18,5 @@ Throw photo what you want to convert to that folder. And run command
 
 `/convert list` - List of in progress converting tasks
 
-`/convert cancel` - DON'T USE THIS COMMAND. IT IS UNDER DEVELOPMENT IN v1.0.0
-
 
 **Enjoy converting block XD**
