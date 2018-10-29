@@ -5,6 +5,11 @@
 Download converted to phar file [here](https://poggit.pmmp.io/ci/korado531m7/ImageConverter/~)  and put it to plugin folder!
 
 
+### Feature
+Please see this converted photo in 'Example' folder
+'before' photo is base for converting
+
+
 ### How to use
 Install this plugin and run your server. It will be created 'ImageConverter' folder in plugin folder.
 Throw photo what you want to convert to that folder. And run command
