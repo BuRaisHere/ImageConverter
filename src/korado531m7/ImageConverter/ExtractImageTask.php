@@ -10,15 +10,23 @@ use pocketmine\scheduler\AsyncTask;
 class ExtractImageTask extends AsyncTask{
     private $path;
     
-    public function __construct(string $path,string $sender){
+    public function __construct(string $path,string $sender, ?string $type = null){
         $this->path = $path;
         $this->sender = $sender;
+        $this->type = $type;
         $this->task = 0;
     }
     
     public function onRun(){
         $result = ImageAPI::convertImage($this->path,$this);
         $this->setResult($result);
+    }
+    
+    public function onCompletion(Server $server){
+        $sender = $server->getPlayer($this->sender);
+        ImageConverter::removeTask($this);
+        $bp = new BlockPlaceClass($this->path, $sender, $this->getType(), $this->getResult());
+        $bp->doPlace();
     }
     
     public function getFilename() : string{
@@ -33,40 +41,7 @@ class ExtractImageTask extends AsyncTask{
         $this->task = $float;
     }
     
-    public function onCompletion(Server $server){
-        $sender = $server->getPlayer($this->sender);
-        ImageConverter::removeTask($this);
-        if($sender instanceof Player){
-            $sender->sendMessage("Image Extracted. Placing Blocks in main thread...");
-            $image = $this->getResult();
-            $var = explode(".",$this->path);
-            $extension = strtolower(array_pop($var));
-            switch($extension){
-                case "jpg":
-                case "jpeg":
-                    $img = @imagecreatefromjpeg($this->path);
-                break;
-            
-                case "png":
-                    $img = @imagecreatefrompng($this->path);
-                break;
-            }
-            $baseX = (int) ($sender->x - imagesx($img) / 2);
-            $baseK = (int) $sender->y - 1;
-            $baseY = (int) ($sender->z - imagesy($img) / 2);
-            $count = 0;
-            $level = $sender->level;
-            foreach($image as $y => $ally){
-                foreach($ally as $x => $allx){
-                    $block = $image[$y][$x];
-                    $level->setBlock(new Vector3($baseX + $x,$baseK,$baseY + $y),Block::get($block[0],$block[1]),true,false);
-                    $count++;
-                }
-            }
-            $sender->sendMessage("Placed {$count} Blocks");
-            imagedestroy($img);
-        }else{
-            $server->getLogger()->notice("Not supported on the console");
-        }
+    public function getType() : string{
+        return $this->type ?? 'unknown';
     }
 }

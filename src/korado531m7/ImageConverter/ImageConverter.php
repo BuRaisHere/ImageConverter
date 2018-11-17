@@ -12,6 +12,7 @@ use pocketmine\scheduler\AsyncTask;
 //use pocketmine\utils\Config; For switching java edition and bedrock edition
 
 class ImageConverter extends PluginBase{
+    const SUPPORTED_EXTENSION = ['jpg','jpeg','png'];
     private static $workingTask = [];
     
     public function onEnable(){
@@ -24,7 +25,7 @@ class ImageConverter extends PluginBase{
         }
     }
     
-    public static function addTask(AsyncTask $task){
+    public static function addTask(ExtractImageTask $task){
         self::$workingTask[] = $task;
     }
     
@@ -32,21 +33,21 @@ class ImageConverter extends PluginBase{
         return self::$workingTask;
     }
     
-    public static function removeTask(AsyncTask $task){
+    public static function removeTask(ExtractImageTask $task){
         $search = array_search($task,self::$workingTask);
         unset(self::$workingTask[$search]);
     }
     
     public function onCommand(CommandSender $sender, Command $command, $label, array $params) : bool{
-        if($command->getName() == 'convert'){
+        if($command->getName() == 'convert' && $sender->hasPermission('imageconverter.convert.command')){
             switch($params[0] ?? null){
                 case 'image-list':
                     $iterator = new \RecursiveDirectoryIterator($this->getDataFolder());
                     $files = [];
                     foreach($iterator as $file){
                         $extension = $file->getExtension();
-                        if($extension === 'png' || $extension === 'jpg' || $extension === 'jpeg'){
-                            $files[] = $file->getBasename();
+                        foreach(self::SUPPORTED_EXTENSION as $ext){
+                            if($extension === $ext) $files[] = $file->getBasename();
                         }
                     }
                     $sender->sendMessage('========== Available Images =========='.PHP_EOL.implode(', ',$files).PHP_EOL.'==============================');
@@ -59,7 +60,7 @@ class ImageConverter extends PluginBase{
                     }else{
                         if(file_exists($this->getDataFolder().$params[1])){
                             $sender->sendMessage('Extracting Image Data in other thread...');
-                            $this->getServer()->getAsyncPool()->submitTask($task = new ExtractImageTask($this->getDataFolder().$params[1],$sender->getName()));
+                            $this->getServer()->getAsyncPool()->submitTask($task = new ExtractImageTask($this->getDataFolder().$params[1],$sender->getName(),($params[2] ?? 'horizontal')));
                             self::addTask($task);
                         }else{
                             $sender->sendMessage('Not found: '.$this->getDataFolder().$params[0]);
@@ -69,7 +70,7 @@ class ImageConverter extends PluginBase{
                 
                 case 'list':
                 case 'l':
-                    $id = array();
+                    $id = [];
                     foreach(self::$workingTask as $taskId){
                         $id[] = $taskId;
                     }
@@ -86,7 +87,8 @@ class ImageConverter extends PluginBase{
                 
                 default:
                     $sender->sendMessage('==== Image Converter ====');
-                    $sender->sendMessage('/convert image <filename> - Convert image into block');
+                    $sender->sendMessage('/convert image <filename> <type §7(default: horizontal)§f> - Convert image into block');
+                    $sender->sendMessage('§7(Available Types: horizontal, vertical)');
                     $sender->sendMessage('/convert image-list - List of image in folder');
                     $sender->sendMessage('/convert list - Show working task list');
                     $sender->sendMessage('=========================');

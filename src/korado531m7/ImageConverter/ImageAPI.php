@@ -68,24 +68,33 @@ class ImageAPI{
         return $return;
     }
     
-    public static function convertImage(string $path,ExtractImageTask $atask){
-        $colors = [];
-        $var1 = explode(".",$path);
-        $extension = strtolower(array_pop($var1));
-        switch($extension){
+    public static function getExtension(string $filename) : string{
+        $var = explode('.', strtolower($filename));
+        return array_pop($var);
+    }
+    
+    public static function getResource(string $path){
+        switch(self::getExtension($path)){
             case 'jpg':
             case 'jpeg':
-                $image = @imagecreatefromjpeg($path);
-            break;
+                $resource = @imagecreatefromjpeg($path);
+                break;
             
             case 'png':
-                $image = @imagecreatefrompng($path);
+                $resource = @imagecreatefrompng($path);
             break;
             
             default:
-                Server::getInstance()->getLogger()->notice('Unsupported file type '.$atask->getFilename());
+                throw new \InvalidArgumentException('Unsupported file type '.$atask->getFilename());
             break;
         }
+        return $resource;
+    }
+    
+    public static function convertImage(string $path,ExtractImageTask $atask){
+        $colors = [];
+        $extension = self::getExtension($path);
+        $image = self::getResource($path);
         if($image !== false){
             $width = imagesx($image);
             $height = imagesy($image);

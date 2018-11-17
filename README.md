@@ -15,7 +15,10 @@ Please see this converted photo in 'Example' folder
 ### How to use
 Install this plugin and run your server. It will be created 'ImageConverter' folder in plugin folder.
 Throw photo what you want to convert to that folder. And run command
-`/convert image <FILENAME>`
+`/convert image <FILENAME> <TYPE (Default: horizontal)>`
+
+**Available Types: horizontal, vertical**
+(More types and direction will develop soon!)
 
 
 ### AVAILABLE COMMANDS

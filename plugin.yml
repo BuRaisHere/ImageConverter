@@ -1,11 +1,10 @@
 name: ImageConverter
 api: 3.3.1
 main: korado531m7\ImageConverter\ImageConverter
-version: 1.0.0
+version: 1.1.0
 author: korado531m7
 description: "Importing photo image and convert it into block"
 commands:
  convert:
   description: "Convert image into block"
- tasklist:
-  description: "Show list converting in progress (Not placing block list)"
+  permission: imageconverter.convert.command
