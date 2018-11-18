@@ -14,7 +14,7 @@ class BlockPlaceClass{
         $this->images = $images;
     }
     
-    public function doPlace() : void{
+    public function doPlace(){
         $player = $this->player;
         $image = $this->images;
         $path = $this->path;
