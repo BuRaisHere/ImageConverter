@@ -34,6 +34,7 @@ class BlockPlaceClass{
                     foreach($image as $y => $ally){
                         foreach($ally as $x => $allx){
                             $block = $image[$y][$x];
+                            if(!$level->isChunkLoaded($baseX + $x, $baseZ + $y)) $level->loadChunk($baseX + $x, $baseZ + $y);
                             $level->setBlock(new Vector3($baseX + $x,$baseK,$baseY + $y),Block::get($block[0],$block[1]),true,false);
                             $count++;
                         }
@@ -47,6 +48,7 @@ class BlockPlaceClass{
                     foreach($image as $y => $ally){
                         foreach($ally as $x => $allx){
                             $block = $image[$y][$x];
+                            if(!$level->isChunkLoaded($baseX + $x, $baseZ + $y)) $level->loadChunk($baseX + $x, $baseZ + $y);
                             $level->setBlock(new Vector3($baseX + $x,$baseY - $y,$baseZ),Block::get($block[0],$block[1]),true,false);
                             $count++;
                         }
