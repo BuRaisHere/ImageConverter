@@ -1,5 +1,5 @@
 <?php
-namespace korado531m7\ImageConverter;
+namespace korado531m7\ImageConverter\utils;
 
 class Color extends \pocketmine\utils\Color{
     /**

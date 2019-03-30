@@ -1,7 +1,12 @@
 <?php
-namespace korado531m7\ImageConverter;
+namespace korado531m7\ImageConverter\utils;
 
-class ImageAPI{
+use korado531m7\ImageConverter\ImageConverter;
+use korado531m7\ImageConverter\Image;
+use korado531m7\ImageConverter\task\ExtractImageTask;
+use korado531m7\ImageConverter\utils\BlockColors;
+
+class ImageTool{
     public static function rgb2lab($rgb){
         $eps = 216/24389; $k = 24389/27;
         // reference white D50
@@ -37,30 +42,30 @@ class ImageAPI{
         return $lab;
     }
     
-    public static function colorDistance($lab1,$lab2){
-        return sqrt(($lab1[0]-$lab2[0])*($lab1[0]-$lab2[0])+($lab1[1]-$lab2[1])*($lab1[1]-$lab2[1])+($lab1[2]-$lab2[2])*($lab1[2]-$lab2[2]));
+    public static function colorDistance($lab1, $lab2){
+        return sqrt(($lab1[0]-$lab2[0]) ** 2 + ($lab1[1]-$lab2[1]) ** 2 + ($lab1[2]-$lab2[2]) ** 2);
     }
     
     public static function str2rgb($str){
         $str = preg_replace('~[^0-9a-f]~','',$str);
         $rgb = str_split($str,2);
-        for($i=0;$i<3;$i++){
+        for($i=0;$i<3; ++$i){
             $rgb[$i] = intval($rgb[$i],16);
         }
         return $rgb;
     }
     
     public static function getNearestColor(array $givenColor,array $palette){
-        $givenColorRGB = is_array($givenColor) ? $givenColor:self::str2rgb($givenColor);
+        $givenColorRGB = is_array($givenColor) ? $givenColor : self::str2rgb($givenColor);
         $min = 0xffff;
         $return = null;
         
-        foreach($palette as $key => $color){
-            $colors = is_array($key)?$color:self::str2rgb($key);
+        foreach($palette as $color){
+            $colors = self::str2rgb($color[2]);
             /* deltaE
             if($min >= ($deltaE = deltaE(self::rgb2lab($key),self::rgb2lab($givenColorRGB))))*/
             //euclidean distance
-            if($min >= ($deltaE = self::colorDistance(self::rgb2lab($colors),self::rgb2lab($givenColorRGB)))){
+            if($min >= ($deltaE = self::colorDistance(self::rgb2lab($colors), self::rgb2lab($givenColorRGB)))){
                 $min = $deltaE;
                 $return = $color;
             }
@@ -68,50 +73,36 @@ class ImageAPI{
         return $return;
     }
     
-    public static function getExtension(string $filename) : string{
-        $var = explode('.', strtolower($filename));
-        return array_pop($var);
-    }
-    
-    public static function getResource(string $path){
-        switch(self::getExtension($path)){
+    public static function getResource(Image $image){
+        $path = $image->getPath() . $image->getFilename();
+        switch(ImageUtility::getExtension($path)){
             case 'jpg':
             case 'jpeg':
-                $resource = @imagecreatefromjpeg($path);
-                break;
-            
+                return imagecreatefromjpeg($path);
             case 'png':
-                $resource = @imagecreatefrompng($path);
-            break;
-            
-            default:
-                throw new \InvalidArgumentException('Unsupported file type '.$atask->getFilename());
-            break;
+                return imagecreatefrompng($path);
         }
-        return $resource;
     }
     
-    public static function convertImage(string $path,ExtractImageTask $atask){
+    public static function convertImage(Image $rawimage, ExtractImageTask $task){
         $colors = [];
-        $extension = self::getExtension($path);
-        $image = self::getResource($path);
-        if($image !== false){
-            $width = imagesx($image);
-            $height = imagesy($image);
-            $pixel = $width * $height;
-            $i = 0;
-            $image = imagescale($image, $width, $height, \IMG_NEAREST_NEIGHBOUR);
-            for ($y = 0; $y < $height; ++$y){
-                for ($x = 0; $x < $width; ++$x){
-                    $atask->setTaskProgress(($i / $pixel) * 100);
-                    $color = imagecolorsforindex($image, imagecolorat($image, $x, $y));
-                    $colorA = new Color($color['red'], $color['green'], $color['blue']);
-                    $colors[$y][$x] = self::getNearestColor($colorA->toArray(), BlockIdList::getBedrockBlockId());
-                    $i++;
-                }
+        $extension = ImageUtility::getExtension($rawimage->getFilename());
+        $image = self::getResource($rawimage);
+        $width = imagesx($image);
+        $height = imagesy($image);
+        $pixel = $width * $height;
+        $count = 0;
+        $image = imagescale($image, $width, $height, \IMG_NEAREST_NEIGHBOUR);
+        for ($y = 0; $y < $height; ++$y){
+            for ($x = 0; $x < $width; ++$x){
+                $task->setProgress(($count / $pixel) * 100);
+                $color = imagecolorsforindex($image, imagecolorat($image, $x, $y));
+                $colorA = new Color($color['red'], $color['green'], $color['blue']);
+                $colors[$y][$x] = self::getNearestColor($colorA->toArray(), BlockColors::getBedrockBlockId());
+                ++$count;
             }
-            imagedestroy($image);
-            return $colors;
         }
+        imagedestroy($image);
+        return $colors;
     }
 }
