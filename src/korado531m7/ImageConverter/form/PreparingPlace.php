@@ -31,8 +31,13 @@ class PreparingPlace implements Form{
             }elseif($data[4] === 3){
                 $rotate = 240;
             }
+            if($data[6] === 0){
+                $blockType = Image::TYPE_BEDROCK_EDITION;
+            }elseif($data[6] === 1){
+                $blockType = Image::TYPE_JAVA_EDITION;
+            }
             $pos = new Vector3($x, $y, $z);
-            $image = new Image($this->filename, $type, $pos, $player->getName(), $rotate ?? 0, ImageConverter::$count++);
+            $image = new Image($this->filename, $type, $pos, $player->getName(), $rotate ?? 0, $blockType, ImageConverter::$count++);
             ImageConverter::addImage($image);
             $confirm = $data[5] === 0;
             if($confirm){
@@ -50,6 +55,7 @@ class PreparingPlace implements Form{
         $contents[] = ['type' => 'input', 'text' => 'Z Coordinates (If you want to place on your position, don\'t write)', 'placeholder' => 'Your Z Coords'];
         $contents[] = ['type' => 'dropdown','text' => 'Image Rotation','options' => ['±0', '+90', '+180', '+240']];
         $contents[] = ['type' => 'dropdown','text' => 'Confirm Area','options' => ['Yes', 'No']];
+        $contents[] = ['type' => 'dropdown','text' => 'Choose Block Id Type','options' => ['Bedrock Edition', 'Java Edition']];
         $this->contents = $contents;
     }
     

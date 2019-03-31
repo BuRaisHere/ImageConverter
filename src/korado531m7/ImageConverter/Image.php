@@ -9,15 +9,12 @@ class Image{
     const STATUS_WAITING = 0;
     const STATUS_CONVERTING = 1;
     
-    private $filename, $type, $pos, $placer, $task = null, $status = self::STATUS_WAITING, $path, $count, $backup = null, $rotate;
+    const TYPE_BEDROCK_EDITION = 0;
+    const TYPE_JAVA_EDITION = 1;
     
-    /**
-     * @param string   $filename    filename. path is not included
-     * @param string   $type        horizontal, vertical
-     * @param Vector3  $pos         a center of position to place
-     * @param string   $placer      player who place
-     */
-    public function __construct(string $filename, string $type, Vector3 $pos, string $placer, int $rotate, int $count){
+    private $filename, $type, $pos, $placer, $task = null, $status = self::STATUS_WAITING, $path, $count, $backup = null, $rotate, $blockType;
+    
+    public function __construct(string $filename, string $type, Vector3 $pos, string $placer, int $rotate, int $blockType, int $count){
         $this->filename = $filename;
         $this->type = $type;
         $this->pos = clone $pos;
@@ -25,6 +22,11 @@ class Image{
         $this->rotate = $rotate;
         $this->path = ImageConverter::getPath();
         $this->count = $count;
+        $this->blockType = $blockType;
+    }
+    
+    public function getBlockType() : int{
+        return $this->blockType;
     }
     
     public function getRotation() : int{

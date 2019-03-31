@@ -96,12 +96,21 @@ class ImageTool{
         $pixel = $width * $height;
         $count = 0;
         $image = imagescale($image, $width, $height, \IMG_NEAREST_NEIGHBOUR);
+        switch($rawimage->getBlockType()){
+            case Image::TYPE_BEDROCK_EDITION:
+                $blockId = BlockColors::getBedrockBlockId();
+            break;
+            
+            case Image::TYPE_JAVA_EDITION:
+                $blockId = BlockColors::getJavaBlockId();
+            break;
+        }
         for ($y = 0; $y < $height; ++$y){
             for ($x = 0; $x < $width; ++$x){
                 $task->setProgress(($count / $pixel) * 100);
                 $color = imagecolorsforindex($image, imagecolorat($image, $x, $y));
                 $colorA = new Color($color['red'], $color['green'], $color['blue']);
-                $colors[$y][$x] = self::getNearestColor($colorA->toArray(), BlockColors::getBedrockBlockId());
+                $colors[$y][$x] = self::getNearestColor($colorA->toArray(), $blockId);
                 ++$count;
             }
         }

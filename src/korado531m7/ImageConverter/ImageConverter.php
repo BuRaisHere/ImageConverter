@@ -8,7 +8,6 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\math\Vector3;
 use pocketmine\plugin\PluginBase;
-//use pocketmine\utils\Config; For switching java edition and bedrock edition
 
 class ImageConverter extends PluginBase{
     const SUPPORTED_EXTENSION = ['jpg','jpeg','png'];

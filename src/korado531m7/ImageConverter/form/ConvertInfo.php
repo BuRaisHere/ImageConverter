@@ -1,6 +1,7 @@
 <?php
 namespace korado531m7\ImageConverter\form;
 
+use korado531m7\ImageConverter\Image;
 use korado531m7\ImageConverter\ImageConverter as IC;
 use korado531m7\ImageConverter\utils\ImageUtility;
 
@@ -28,6 +29,15 @@ class ConvertInfo implements Form{
         $text .= 'Size: '.$size[0].'x'.$size[1].PHP_EOL;
         $text .= 'Conversion Progress: '.$image->getTask()->getProgress().'%%'.PHP_EOL;
         $text .= 'Place Type: '.$image->getType().PHP_EOL;
+        switch($image->getBlockType()){
+            case Image::TYPE_BEDROCK_EDITION:
+                $bt = 'Bedrock Edition';
+            break;
+            case Image::TYPE_JAVA_EDITION:
+                $bt = 'Java Edition';
+            break;
+        }
+        $text .= 'Block Type: '.$bt.PHP_EOL;
         $text .= 'Estimated time: '.'§7---';
         $text .= PHP_EOL;
         return $text;

@@ -14,10 +14,10 @@ class BlockPlace{
         $this->image = $image;
         $this->data = $data;
     }
-    
-    public function getPlayer() : ?Player{
-        return Server::getInstance()->getPlayer($this->image->getPlacer());
-    }
+	
+	public function getPlayer() : ?Player{
+		return Server::getInstance()->getPlayer($this->image->getPlacer());
+	}
     
     public function doPlace(){
         $player = $this->getPlayer();
