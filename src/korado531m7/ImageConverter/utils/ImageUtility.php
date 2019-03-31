@@ -14,6 +14,7 @@ class ImageUtility{
         $player = Server::getInstance()->getPlayer($image->getPlacer());
         $level = $player->level;
         $img = ImageTool::getResource($image);
+        $blocks = [];
         switch($image->getType()){
             case 'Horizontal':
                 $baseX = (int) ($image->getPosition()->x - imagesx($img) / 2);
@@ -21,8 +22,12 @@ class ImageUtility{
                 $baseY = (int) ($image->getPosition()->z - imagesy($img) / 2);
                 for($y = 0; $y < imagesy($img); ++$y){
                     for($x = 0; $x < imagesx($img); ++$x){
-                        if(!$level->isChunkLoaded($baseX + $x,$baseK,$baseY + $y)) $level->loadChunk($baseX + $x,$baseK,$baseY + $y);
-                        $level->setBlock(new Vector3($baseX + $x,$baseK,$baseY + $y),Block::get(BlockIds::GLASS), true, false);
+                        $pos = new Vector3($baseX + $x,$baseK,$baseY + $y);
+                        if(!$level->isChunkLoaded($baseX + $x,$baseK,$baseY + $y)){
+                            $level->loadChunk($baseX + $x,$baseK,$baseY + $y);
+                        }
+                        $blocks[] = [$pos, $level->getBlockAt($baseX + $x, $baseK, $baseY + $y,false,false)];
+                        $level->setBlock($pos, Block::get(BlockIds::GLASS), true, false);
                     }
                 }
             break;
@@ -33,11 +38,30 @@ class ImageUtility{
                 $baseZ = (int) $image->getPosition()->z + 5;
                 for($y = 0; $y < imagesy($img); ++$y){
                     for($x = 0; $x < imagesx($img); ++$x){
-                        if(!$level->isChunkLoaded($baseX + $x, $baseZ + $y)) $level->loadChunk($baseX + $x, $baseZ + $y);
-                        $level->setBlock(new Vector3($baseX + $x,$baseY - $y,$baseZ),Block::get(BlockIds::GLASS),true,false);
+                        $pos = new Vector3($baseX + $x,$baseY - $y,$baseZ);
+                        if(!$level->isChunkLoaded($baseX + $x, $baseZ + $y)){
+                            $level->loadChunk($baseX + $x, $baseZ + $y);
+                        }
+                        $blocks[] = [$pos, $level->getBlockAt($baseX + $x,$baseY - $y,$baseZ,false,false)];
+                        $level->setBlock($pos, Block::get(BlockIds::GLASS),true,false);
                     }
                 }
             break;
+        }
+        $image->setBackup($blocks);
+    }
+    
+    public static function restoreBlocks(Image $image) : bool{
+        $backup = $image->getBackup();
+        if($backup === null){
+            return false;
+        }else{
+            $player = Server::getInstance()->getPlayer($image->getPlacer());
+            $level = $player->level;
+            foreach($backup as $block){
+                $level->setBlock($block[0], $block[1],true,false);
+            }
+            return true;
         }
     }
     

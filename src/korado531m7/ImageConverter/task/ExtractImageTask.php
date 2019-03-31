@@ -15,9 +15,9 @@ class ExtractImageTask extends AsyncTask{
     private $image, $task = 0;
     
     public function __construct(Image $image){
-        $this->image = $image;
         $image->setTask($this);
         $image->setStatus(Image::STATUS_CONVERTING);
+        $this->image = $image;
     }
     
     public function onRun(){

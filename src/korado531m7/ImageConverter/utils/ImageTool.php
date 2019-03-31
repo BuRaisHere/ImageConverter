@@ -20,22 +20,22 @@ class ImageTool{
         $rgb[2] = $rgb[2]/255; //B 0..1
         
         // assuming sRGB (D65)
-        $rgb[0] = ($rgb[0] <= 0.04045)?($rgb[0]/12.92):pow(($rgb[0]+0.055)/1.055,2.4);
-        $rgb[1] = ($rgb[1] <= 0.04045)?($rgb[1]/12.92):pow(($rgb[1]+0.055)/1.055,2.4);
-        $rgb[2] = ($rgb[2] <= 0.04045)?($rgb[2]/12.92):pow(($rgb[2]+0.055)/1.055,2.4);
+        $rgb[0] = ($rgb[0] <= 0.04045) ? ($rgb[0] / 12.92) : ($rgb[0] + 0.055) / 1.055 ** 2.4;
+        $rgb[1] = ($rgb[1] <= 0.04045) ? ($rgb[1] / 12.92) : ($rgb[1] + 0.055) / 1.055 ** 2.4;
+        $rgb[2] = ($rgb[2] <= 0.04045) ? ($rgb[2] / 12.92) : ($rgb[2] + 0.055) / 1.055 ** 2.4;
         
         // sRGB D50
-        $x =  0.4360747*$rgb[0] + 0.3850649*$rgb[1] + 0.1430804*$rgb[2];
-        $y =  0.2225045*$rgb[0] + 0.7168786*$rgb[1] + 0.0606169*$rgb[2];
-        $z =  0.0139322*$rgb[0] + 0.0971045*$rgb[1] + 0.7141733*$rgb[2];
+        $x =  0.4360747 * $rgb[0] + 0.3850649 * $rgb[1] + 0.1430804 * $rgb[2];
+        $y =  0.2225045 * $rgb[0] + 0.7168786 * $rgb[1] + 0.0606169 * $rgb[2];
+        $z =  0.0139322 * $rgb[0] + 0.0971045 * $rgb[1] + 0.7141733 * $rgb[2];
         // sRGB D65
-        /*$x =  0.412453*$rgb[0] + 0.357580*$rgb[1] + 0.180423*$rgb[2];
-         $y =  0.212671*$rgb[0] + 0.715160*$rgb[1] + 0.072169*$rgb[2];
-         $z =  0.019334*$rgb[0] + 0.119193*$rgb[1] + 0.950227*$rgb[2];*/
+        /*$x =  0.412453 * $rgb[0] + 0.357580 * $rgb[1] + 0.180423 * $rgb[2];
+         $y =  0.212671 * $rgb[0] + 0.715160 * $rgb[1] + 0.072169 * $rgb[2];
+         $z =  0.019334 * $rgb[0] + 0.119193 * $rgb[1] + 0.950227 * $rgb[2];*/
         
         // XYZ to Lab
         $xr = $x/$xr; $yr = $y/$yr; $zr = $z/$zr;
-        $fx = ($xr > $eps)?pow($xr, 1/3):($fx = ($k * $xr + 16) / 116); $fy = ($yr > $eps)?pow($yr, 1/3):($fy = ($k * $yr + 16) / 116); $fz = ($zr > $eps)?pow($zr, 1/3):($fz = ($k * $zr + 16) / 116);
+        $fx = ($xr > $eps) ? $xr ** (1/3) : ($fx = ($k * $xr + 16) / 116); $fy = ($yr > $eps) ? $yr ** (1/3) : ($fy = ($k * $yr + 16) / 116); $fz = ($zr > $eps) ? $zr ** (1/3):($fz = ($k * $zr + 16) / 116);
         
         $lab = array();
         $lab[] = round(( 116 * $fy ) - 16); $lab[] = round(500*($fx-$fy)); $lab[] = round(200*($fy-$fz));
@@ -88,6 +88,9 @@ class ImageTool{
         $colors = [];
         $extension = ImageUtility::getExtension($rawimage->getFilename());
         $image = self::getResource($rawimage);
+        if($rawimage->getRotation() !== 0){
+            $image = imagerotate($image, $rawimage->getRotation(), 0); //white
+        }
         $width = imagesx($image);
         $height = imagesy($image);
         $pixel = $width * $height;
