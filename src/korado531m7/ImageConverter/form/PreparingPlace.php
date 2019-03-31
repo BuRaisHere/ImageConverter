@@ -37,10 +37,11 @@ class PreparingPlace implements Form{
                 $blockType = Image::TYPE_JAVA_EDITION;
             }
             $pos = new Vector3($x, $y, $z);
-            $image = new Image($this->filename, $type, $pos, $player->getName(), $rotate ?? 0, $blockType, ImageConverter::$count++);
+            $image = new Image($this->filename, $type, $pos, $player->getName(), $rotate ?? 0, $blockType, ImageConverter::$count++, $player->level->getFolderName());
             ImageConverter::addImage($image);
             $confirm = $data[5] === 0;
             if($confirm){
+                $player->sendMessage('§7Please wait...');
                 ImageUtility::checkArea($image);
             }
             $player->sendForm(new ConfirmConversion($image, $confirm));

@@ -9,10 +9,10 @@ use pocketmine\Player;
 use pocketmine\form\Form;
 
 class ConvertInfo implements Form{
-    private $filename;
+    private $image;
     
-    public function __construct(string $filename){
-        $this->filename = $filename;
+    public function __construct(Image $image){
+        $this->image = $image;
     }
     
     public function handleResponse(Player $player, $data) : void{
@@ -20,16 +20,15 @@ class ConvertInfo implements Form{
     }
     
     private function getInfo() : string{
-        $path = IC::getPath() . $this->filename;
-        $image = IC::getImage($this->filename);
+        $path = IC::getPath() . $this->image->getFilename();
         $size = getimagesize($path);
         $text = '';
-        $text .= 'Filename: '.$this->filename.PHP_EOL;
+        $text .= 'Filename: '.basename($path).PHP_EOL;
         $text .= 'Filesize: '.ImageUtility::formatSizeUnits(filesize($path)).PHP_EOL;
         $text .= 'Size: '.$size[0].'x'.$size[1].PHP_EOL;
-        $text .= 'Conversion Progress: '.$image->getTask()->getProgress().'%%'.PHP_EOL;
-        $text .= 'Place Type: '.$image->getType().PHP_EOL;
-        switch($image->getBlockType()){
+        $text .= 'Conversion Progress: '.$this->image->getTask()->getProgress().'%%'.PHP_EOL;
+        $text .= 'Place Type: '.$this->image->getType().PHP_EOL;
+        switch($this->image->getBlockType()){
             case Image::TYPE_BEDROCK_EDITION:
                 $bt = 'Bedrock Edition';
             break;

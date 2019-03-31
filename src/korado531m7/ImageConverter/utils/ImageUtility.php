@@ -26,7 +26,8 @@ class ImageUtility{
                         if(!$level->isChunkLoaded($baseX + $x,$baseK,$baseY + $y)){
                             $level->loadChunk($baseX + $x,$baseK,$baseY + $y);
                         }
-                        $blocks[] = [$pos, $level->getBlockAt($baseX + $x, $baseK, $baseY + $y,false,false)];
+                        $b = $level->getBlockAt($baseX + $x, $baseK, $baseY + $y,false,false);
+                        $blocks[] = [$pos, $b->getId(), $b->getDamage()];
                         $level->setBlock($pos, Block::get(BlockIds::GLASS), true, false);
                     }
                 }
@@ -42,7 +43,8 @@ class ImageUtility{
                         if(!$level->isChunkLoaded($baseX + $x, $baseZ + $y)){
                             $level->loadChunk($baseX + $x, $baseZ + $y);
                         }
-                        $blocks[] = [$pos, $level->getBlockAt($baseX + $x,$baseY - $y,$baseZ,false,false)];
+                        $b = $level->getBlockAt($baseX + $x,$baseY - $y,$baseZ,false,false);
+                        $blocks[] = [$pos, $b->getId(), $b->getDamage()];
                         $level->setBlock($pos, Block::get(BlockIds::GLASS),true,false);
                     }
                 }
@@ -59,7 +61,7 @@ class ImageUtility{
             $player = Server::getInstance()->getPlayer($image->getPlacer());
             $level = $player->level;
             foreach($backup as $block){
-                $level->setBlock($block[0], $block[1],true,false);
+                $level->setBlock($block[0], Block::get($block[1], $block[2]),true,false);
             }
             return true;
         }

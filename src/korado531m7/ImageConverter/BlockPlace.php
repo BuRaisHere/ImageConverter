@@ -1,6 +1,7 @@
 <?php
 namespace korado531m7\ImageConverter;
 
+use korado531m7\ImageConverter\ImageConverter;
 use korado531m7\ImageConverter\utils\ImageTool;
 use korado531m7\ImageConverter\utils\ImageUtility;
 
@@ -14,10 +15,10 @@ class BlockPlace{
         $this->image = $image;
         $this->data = $data;
     }
-	
-	public function getPlayer() : ?Player{
-		return Server::getInstance()->getPlayer($this->image->getPlacer());
-	}
+    
+    public function getPlayer() : ?Player{
+        return Server::getInstance()->getPlayer($this->image->getPlacer());
+    }
     
     public function doPlace(){
         $player = $this->getPlayer();
@@ -43,7 +44,7 @@ class BlockPlace{
                         $block = $image[$y][$x];
                         if(!$level->isChunkLoaded($baseX + $x,$baseK,$baseY + $y)) $level->loadChunk($baseX + $x,$baseK,$baseY + $y);
                         $level->setBlock(new Vector3($baseX + $x,$baseK,$baseY + $y),Block::get($block[0],$block[1]),true,false);
-                        $count++;
+                        ++$count;
                     }
                 }
                 break;
@@ -57,11 +58,12 @@ class BlockPlace{
                         $block = $image[$y][$x];
                         if(!$level->isChunkLoaded($baseX + $x, $baseZ + $y)) $level->loadChunk($baseX + $x, $baseZ + $y);
                         $level->setBlock(new Vector3($baseX + $x,$baseY - $y,$baseZ),Block::get($block[0],$block[1]),true,false);
-                        $count++;
+                        ++$count;
                     }
                 }
                 break;
         }
+        ImageConverter::getImage($this->image->getId())->setCount($count);
         if($player instanceof Player){
             $player->sendMessage("Placed {$count} Blocks");
         }

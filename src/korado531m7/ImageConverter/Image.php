@@ -8,21 +8,27 @@ use pocketmine\math\Vector3;
 class Image{
     const STATUS_WAITING = 0;
     const STATUS_CONVERTING = 1;
+    const STATUS_COMPLETE = 2;
     
     const TYPE_BEDROCK_EDITION = 0;
     const TYPE_JAVA_EDITION = 1;
     
-    private $filename, $type, $pos, $placer, $task = null, $status = self::STATUS_WAITING, $path, $count, $backup = null, $rotate, $blockType;
+    private $filename, $type, $pos, $placer, $task = null, $status = self::STATUS_WAITING, $path, $id, $backup = null, $rotate, $blockType, $level, $count;
     
-    public function __construct(string $filename, string $type, Vector3 $pos, string $placer, int $rotate, int $blockType, int $count){
+    public function __construct(string $filename, string $type, Vector3 $pos, string $placer, int $rotate, int $blockType, int $id, string $level){
         $this->filename = $filename;
         $this->type = $type;
         $this->pos = clone $pos;
         $this->placer = $placer;
         $this->rotate = $rotate;
         $this->path = ImageConverter::getPath();
-        $this->count = $count;
+        $this->id = $id;
         $this->blockType = $blockType;
+        $this->level = $level;
+    }
+    
+    public function getLevelName() : string{
+        return $this->level;
     }
     
     public function getBlockType() : int{
@@ -33,8 +39,8 @@ class Image{
         return $this->rotate;
     }
     
-    public function getCount() : int{
-        return $this->count;
+    public function getId() : int{
+        return $this->id;
     }
     
     public function getPath() : string{
@@ -75,9 +81,6 @@ class Image{
     
     public function setStatus(int $status){
         $this->status = $status;
-        if($status === self::STATUS_CONVERTING){
-            $this->backup = null;
-        }
     }
     
     public function getStatus() : int{
@@ -91,4 +94,12 @@ class Image{
     public function getBackup() : ?array{
         return $this->backup;
     }
+	
+	public function getCount() : int{
+		return $this->count;
+	}
+	
+	public function setCount(int $count){
+		$this->count = $count;
+	}
 }

@@ -7,15 +7,15 @@ use korado531m7\ImageConverter\ImageConverter as IC;
 use pocketmine\Player;
 use pocketmine\form\Form;
 
-class ConvertingList implements Form{
+class CompleteList implements Form{
     public function __construct(){
         $this->prepare();
     }
     
     public function handleResponse(Player $player, $data) : void{
         $result = $this->getResult($data);
-        if($result !== null){
-            $player->sendForm(new ConvertInfo($result));
+        if($result instanceof Image){
+            $player->sendForm(new CompleteInfo($result));
         }
     }
     
@@ -24,7 +24,7 @@ class ConvertingList implements Form{
         $tmp = [];
         $lists = IC::getImages();
         foreach($lists as $list){
-            if($list->getStatus() === Image::STATUS_CONVERTING){
+            if($list->getStatus() === Image::STATUS_COMPLETE){
                 $res[] = ['text' => $list->getFilename()];
                 $tmp[] = $list;
             }
@@ -39,6 +39,6 @@ class ConvertingList implements Form{
     
     public function jsonSerialize(){
         $c = count($this->buttons);
-        return ['type' => 'form', 'title' => '§aList of Converting Image', 'content' => $c === 0 ? 'No tasks are working' : ('§e'.$c.' §btask'.($c === 1 ? ' is' : 's are').' working'), 'buttons' => $this->buttons];
+        return ['type' => 'form', 'title' => '§aList of Converted Image', 'content' => $c === 0 ? 'No images are converted' : ('§e'.$c.' §bimage'.($c === 1 ? ' is' : 's are').' converted'), 'buttons' => $this->buttons];
     }
 }

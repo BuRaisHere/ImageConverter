@@ -6,7 +6,7 @@ use pocketmine\Player;
 
 class ConverterTop implements Form{
     public function __construct(){
-        $this->buttons = [['text' => 'Show Converting List'],['text' => 'Convert a Image']];
+        $this->buttons = [['text' => 'Show Converting List'],['text' => 'Completed Conversion'],['text' => 'Convert a Image']];
     }
     
     public function handleResponse(Player $player, $data) : void{
@@ -18,6 +18,10 @@ class ConverterTop implements Form{
             
             case 'Convert a Image':
                 $player->sendForm(new SelectImage());
+            break;
+            
+            case 'Completed Conversion':
+                $player->sendForm(new CompleteList());
             break;
         }
     }

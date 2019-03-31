@@ -26,7 +26,8 @@ class ExtractImageTask extends AsyncTask{
     }
     
     public function onCompletion(Server $server){
-        ImageConverter::removeImage($this->image);
+        $base = ImageConverter::getImage($this->image->getId());
+        $base->setStatus(Image::STATUS_COMPLETE);
         (new BlockPlace($this->image, $this->getResult()))->doPlace();
     }
     

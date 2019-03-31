@@ -32,9 +32,9 @@ class ImageConverter extends PluginBase{
         return self::$img;
     }
     
-    public static function getImage(string $filename) : ?Image{
+    public static function getImage(int $id) : ?Image{
         foreach(self::getImages() as $img){
-            if($img->getFilename() === $filename){
+            if($img->getId() === $id){
                 return $img;
             }
         }
@@ -43,7 +43,7 @@ class ImageConverter extends PluginBase{
     
     public static function removeImage(Image $rawImage){
         foreach(self::getImages() as $key => $image){
-            if($image->getCount() === $rawImage->getCount()){
+            if($image->getId() === $rawImage->getId()){
                 unset(self::$img[$key]);
             }
         }

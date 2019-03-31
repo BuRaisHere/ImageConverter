@@ -5,8 +5,8 @@ use korado531m7\ImageConverter\Image;
 use korado531m7\ImageConverter\task\ExtractImageTask;
 use korado531m7\ImageConverter\utils\ImageUtility;
 
-use pocketmine\form\Form;
 use pocketmine\Player;
+use pocketmine\form\Form;
 use pocketmine\Server;
 
 class ConfirmConversion implements Form{
