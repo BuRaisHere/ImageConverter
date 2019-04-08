@@ -37,7 +37,7 @@ class ConvertInfo implements Form{
             break;
         }
         $text .= 'Block Type: '.$bt.PHP_EOL;
-        $text .= 'Estimated time: '.'§7---';
+        $text .= 'Estimated time: '.'§7---'; //TODO
         $text .= PHP_EOL;
         return $text;
     }

@@ -20,26 +20,31 @@ class PreparingPlace implements Form{
             $type = 'Horizontal';
             if($data[0] === 1){
                 $type = 'Vertical';
+            }elseif($data[0] === 2){
+                $type = 'Stair';
+            }elseif($data[0] === 3){
+                $type = 'Parallelogram';
             }
-            $x = (int) (empty($data[1]) ? $player->x : (is_numeric($data[1]) ? $data[1] : $player->x));
-            $y = (int) (empty($data[2]) ? $player->y : (is_numeric($data[2]) ? $data[2] : $player->y));
-            $z = (int) (empty($data[3]) ? $player->z : (is_numeric($data[3]) ? $data[3] : $player->z));
-            if($data[4] === 1){
+            $place = $data[1] + 1;
+            $x = (int) (empty($data[2]) ? $player->x : (is_numeric($data[2]) ? $data[2] : $player->x));
+            $y = (int) (empty($data[3]) ? $player->y : (is_numeric($data[3]) ? $data[3] : $player->y));
+            $z = (int) (empty($data[4]) ? $player->z : (is_numeric($data[4]) ? $data[4] : $player->z));
+            if($data[5] === 1){
                 $rotate = 90;
-            }elseif($data[4] === 2){
+            }elseif($data[5] === 2){
                 $rotate = 180;
-            }elseif($data[4] === 3){
+            }elseif($data[5] === 3){
                 $rotate = 240;
             }
-            if($data[6] === 0){
+            if($data[7] === 0){
                 $blockType = Image::TYPE_BEDROCK_EDITION;
-            }elseif($data[6] === 1){
+            }elseif($data[7] === 1){
                 $blockType = Image::TYPE_JAVA_EDITION;
             }
             $pos = new Vector3($x, $y, $z);
-            $image = new Image($this->filename, $type, $pos, $player->getName(), $rotate ?? 0, $blockType, ImageConverter::$count++, $player->level->getFolderName());
+            $image = new Image($this->filename, $place, $type, $pos, $player->getName(), $rotate ?? 0, $blockType, ImageConverter::$count++, $player->level->getFolderName());
             ImageConverter::addImage($image);
-            $confirm = $data[5] === 0;
+            $confirm = $data[6] === 0;
             if($confirm){
                 $player->sendMessage('§7Please wait...');
                 ImageUtility::checkArea($image);
@@ -50,7 +55,8 @@ class PreparingPlace implements Form{
     
     private function prepare(){
         $contents = [];
-        $contents[] = ['type' => 'dropdown','text' => 'Select Type','options' => ['Horizontal', 'Vertical']];
+        $contents[] = ['type' => 'dropdown','text' => 'Select Type','options' => ['Horizontal', 'Vertical', 'Stair', 'Parallelogram']];
+        $contents[] = ['type' => 'dropdown','text' => 'Placement Type','options' => ['1','2','3','4']];
         $contents[] = ['type' => 'input', 'text' => 'X Coordinates (If you want to place on your position, don\'t write)', 'placeholder' => 'Your X Coords'];
         $contents[] = ['type' => 'input', 'text' => 'Y Coordinates (If you want to place on your position, don\'t write)', 'placeholder' => 'Your Y Coords'];
         $contents[] = ['type' => 'input', 'text' => 'Z Coordinates (If you want to place on your position, don\'t write)', 'placeholder' => 'Your Z Coords'];

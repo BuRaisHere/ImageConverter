@@ -16,12 +16,16 @@ class ImageUtility{
         $img = ImageTool::getResource($image);
         $blocks = [];
         switch($image->getType()){
+            case 'Stair':
+            case 'Parallelogram':
             case 'Horizontal':
-                $baseX = (int) ($image->getPosition()->x - imagesx($img) / 2);
+                $width = imagesx($img);
+                $height = imagesy($img);
+                $baseX = (int) ($image->getPosition()->x - $width / 2);
                 $baseK = (int) $image->getPosition()->y - 1;
-                $baseY = (int) ($image->getPosition()->z - imagesy($img) / 2);
-                for($y = 0; $y < imagesy($img); ++$y){
-                    for($x = 0; $x < imagesx($img); ++$x){
+                $baseY = (int) ($image->getPosition()->z - $height / 2);
+                for($y = 0; $y < $height; ++$y){
+                    for($x = 0; $x < $width; ++$x){
                         $pos = new Vector3($baseX + $x,$baseK,$baseY + $y);
                         if(!$level->isChunkLoaded($baseX + $x,$baseK,$baseY + $y)){
                             $level->loadChunk($baseX + $x,$baseK,$baseY + $y);
@@ -29,6 +33,43 @@ class ImageUtility{
                         $b = $level->getBlockAt($baseX + $x, $baseK, $baseY + $y,false,false);
                         $blocks[] = [$pos, $b->getId(), $b->getDamage()];
                         $level->setBlock($pos, Block::get(BlockIds::GLASS), true, false);
+                        if($x === ($width - 1)){
+                            switch($image->getType()){
+                                case 'Parallelogram':
+                                    switch($image->getPlace()){
+                                        case 1:
+                                            $baseX += 1;
+                                        break;
+                                        
+                                        case 2:
+                                            $baseX -= 1;
+                                        break;
+                                        
+                                        case 3:
+                                            $baseY += 1;
+                                        break;
+                                        
+                                        case 4:
+                                            $baseY -= 1;
+                                        break;
+                                    }
+                                break;
+                                
+                                case 'Stair':
+                                    switch($image->getPlace()){
+                                        case 1:
+                                        case 2:
+                                            $baseK += 1;
+                                        break;
+                                        
+                                        case 3:
+                                        case 4:
+                                            $baseK -= 1;
+                                        break;
+                                    }
+                                break;
+                            }
+                        }
                     }
                 }
             break;

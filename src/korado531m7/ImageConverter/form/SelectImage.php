@@ -22,7 +22,7 @@ class SelectImage implements Form{
         $iterator = new \RecursiveDirectoryIterator(ImageConverter::getPath());
         $files = [];
         foreach($iterator as $file){
-            if(in_array($file->getExtension(), ImageConverter::SUPPORTED_EXTENSION)){
+            if(in_array(strtolower($file->getExtension()), ImageConverter::SUPPORTED_EXTENSION)){
                 $files[] = ['text' => $file->getBasename()];
             }
         }

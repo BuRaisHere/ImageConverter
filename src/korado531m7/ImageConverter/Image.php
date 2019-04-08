@@ -13,10 +13,11 @@ class Image{
     const TYPE_BEDROCK_EDITION = 0;
     const TYPE_JAVA_EDITION = 1;
     
-    private $filename, $type, $pos, $placer, $task = null, $status = self::STATUS_WAITING, $path, $id, $backup = null, $rotate, $blockType, $level, $count;
+    private $filename, $type, $pos, $place, $placer, $task = null, $status = self::STATUS_WAITING, $path, $id, $backup = null, $rotate, $blockType, $level, $count;
     
-    public function __construct(string $filename, string $type, Vector3 $pos, string $placer, int $rotate, int $blockType, int $id, string $level){
+    public function __construct(string $filename, int $place, string $type, Vector3 $pos, string $placer, int $rotate, int $blockType, int $id, string $level){
         $this->filename = $filename;
+        $this->place = $place;
         $this->type = $type;
         $this->pos = clone $pos;
         $this->placer = $placer;
@@ -29,6 +30,10 @@ class Image{
     
     public function getLevelName() : string{
         return $this->level;
+    }
+    
+    public function getPlace() : int{
+        return $this->place;
     }
     
     public function getBlockType() : int{
@@ -94,12 +99,12 @@ class Image{
     public function getBackup() : ?array{
         return $this->backup;
     }
-	
-	public function getCount() : int{
-		return $this->count;
-	}
-	
-	public function setCount(int $count){
-		$this->count = $count;
-	}
+    
+    public function getCount() : int{
+        return $this->count;
+    }
+    
+    public function setCount(int $count){
+        $this->count = $count;
+    }
 }
