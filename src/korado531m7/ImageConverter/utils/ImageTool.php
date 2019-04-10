@@ -91,11 +91,33 @@ class ImageTool{
         if($rawimage->getRotation() !== 0){
             $image = imagerotate($image, $rawimage->getRotation(), 0); //white
         }
+        if($rawimage->getFlip() !== Image::FLIP_NONE){
+            switch($rawimage->getFlip()){
+                case Image::FLIP_HORIZONTAL:
+                    $flip = IMG_FLIP_HORIZONTAL;
+                break;
+                case Image::FLIP_VERTICAL:
+                    $flip = IMG_FLIP_VERTICAL;
+                break;
+                case Image::FLIP_BOTH:
+                    $flip = IMG_FLIP_BOTH;
+                break;
+            }
+            imageflip($image, $flip);
+        }
+        if($rawimage->getFilter() !== Image::FILTER_NONE){
+            switch($rawimage->getFilter()){
+                case Image::FILTER_NEGATE:
+                    $filter = IMG_FILTER_NEGATE;
+                break;
+            }
+            imagefilter($image, $filter);
+        }
         $width = imagesx($image);
         $height = imagesy($image);
         $pixel = $width * $height;
         $count = 0;
-        $image = imagescale($image, $width, $height, \IMG_NEAREST_NEIGHBOUR);
+        $image = imagescale($image, $width, $height, IMG_NEAREST_NEIGHBOUR);
         switch($rawimage->getBlockType()){
             case Image::TYPE_BEDROCK_EDITION:
                 $blockId = BlockColors::getBedrockBlockId();

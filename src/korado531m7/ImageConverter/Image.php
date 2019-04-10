@@ -13,17 +13,24 @@ class Image{
     const TYPE_BEDROCK_EDITION = 0;
     const TYPE_JAVA_EDITION = 1;
     
-    private $filename, $type, $pos, $place, $placer, $task = null, $status = self::STATUS_WAITING, $path, $id, $backup = null, $rotate, $blockType, $level, $count;
+    const FLIP_NONE = 0;
+    const FLIP_HORIZONTAL = 1;
+    const FLIP_VERTICAL = 2;
+    const FLIP_BOTH = 3;
     
-    public function __construct(string $filename, int $place, string $type, Vector3 $pos, string $placer, int $rotate, int $blockType, int $id, string $level){
+    const FILTER_NONE = 0;
+    const FILTER_NEGATE = 1;
+    
+    private $filename, $type, $pos, $place, $placer, $task = null, $status = self::STATUS_WAITING, $path, $id, $backup = null, $rotate = 0, $blockType, $level, $count, $flip = self::FLIP_NONE, $filter = self::FILTER_NONE;
+    
+    public function __construct(string $filename, int $place, string $type, Vector3 $pos, string $placer, int $blockType, string $level){
         $this->filename = $filename;
         $this->place = $place;
         $this->type = $type;
         $this->pos = clone $pos;
         $this->placer = $placer;
-        $this->rotate = $rotate;
         $this->path = ImageConverter::getPath();
-        $this->id = $id;
+        $this->id = ImageConverter::$count++;
         $this->blockType = $blockType;
         $this->level = $level;
     }
@@ -40,6 +47,26 @@ class Image{
         return $this->blockType;
     }
     
+    public function setFilter(int $value){
+        $this->filter = $value;
+    }
+    
+    public function getFilter() : int{
+        return $this->filter;
+    }
+    
+    public function setFlip(int $value){
+        $this->flip = $value;
+    }
+    
+    public function getFlip() : int{
+        return $this->flip;
+    }
+    
+    public function setRotation(int $value){
+        $this->rotate = $value;
+    }
+    
     public function getRotation() : int{
         return $this->rotate;
     }
@@ -50,14 +77,6 @@ class Image{
     
     public function getPath() : string{
         return $this->path;
-    }
-    
-    public function setProgress(float $value){
-        $this->progress = $value;
-    }
-    
-    public function getProgress() : float{
-        return round($this->progress, 2);
     }
     
     public function setTask(ExtractImageTask $task){

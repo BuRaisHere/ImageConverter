@@ -20,7 +20,9 @@ class CompleteInfo implements Form{
     
     public function handleResponse(Player $player, $data) : void{
         $result = $this->getResult($data);
-        if($result !== null){
+        if($result === null){
+            $player->sendForm(new CompleteList());
+        }else{
             switch($result){
                 case 'Undo':
                     $player->sendMessage('§bRestoring Blocks...');

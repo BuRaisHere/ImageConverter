@@ -17,10 +17,10 @@ class ImageInformation implements Form{
     
     public function handleResponse(Player $player, $data) : void{
         $result = $this->getResult($data);
-        switch($result){
-            case 'Convert into Block':
-                $player->sendForm(new PreparingPlace($this->filename));
-            break;
+        if($result === null){
+            $player->sendForm(new SelectImage());
+        }elseif($result === 'Convert into Block'){
+            $player->sendForm(new PreparingPlace($this->filename));
         }
     }
     

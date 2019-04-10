@@ -14,7 +14,9 @@ class CompleteList implements Form{
     
     public function handleResponse(Player $player, $data) : void{
         $result = $this->getResult($data);
-        if($result instanceof Image){
+        if($result === null){
+            $player->sendForm(new ConverterTop($result));
+        }elseif($result instanceof Image){
             $player->sendForm(new CompleteInfo($result));
         }
     }

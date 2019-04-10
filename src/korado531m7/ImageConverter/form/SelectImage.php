@@ -13,7 +13,9 @@ class SelectImage implements Form{
     
     public function handleResponse(Player $player, $data) : void{
         $result = $this->getResult($data);
-        if($result !== null){
+        if($result === null){
+            $player->sendForm(new ConverterTop($result));
+        }else{
             $player->sendForm(new ImageInformation($result));
         }
     }

@@ -14,7 +14,9 @@ class ConvertingList implements Form{
     
     public function handleResponse(Player $player, $data) : void{
         $result = $this->getResult($data);
-        if($result !== null){
+        if($result === null){
+            $player->sendForm(new ConverterTop());
+        }else{
             $player->sendForm(new ConvertInfo($result));
         }
     }

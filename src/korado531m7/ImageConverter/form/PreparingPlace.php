@@ -17,7 +17,6 @@ class PreparingPlace implements Form{
     
     public function handleResponse(Player $player, $data) : void{
         if($data !== null){
-            $type = 'Horizontal';
             if($data[0] === 1){
                 $type = 'Vertical';
             }elseif($data[0] === 2){
@@ -26,25 +25,29 @@ class PreparingPlace implements Form{
                 $type = 'Parallelogram';
             }
             $place = $data[1] + 1;
-            $x = (int) (empty($data[2]) ? $player->x : (is_numeric($data[2]) ? $data[2] : $player->x));
-            $y = (int) (empty($data[3]) ? $player->y : (is_numeric($data[3]) ? $data[3] : $player->y));
-            $z = (int) (empty($data[4]) ? $player->z : (is_numeric($data[4]) ? $data[4] : $player->z));
-            if($data[5] === 1){
-                $rotate = 90;
-            }elseif($data[5] === 2){
-                $rotate = 180;
-            }elseif($data[5] === 3){
-                $rotate = 240;
-            }
-            if($data[7] === 0){
+            $x = (int) empty($data[2]) ? $player->x : (is_numeric($data[2]) ? $data[2] : $player->x);
+            $y = (int) empty($data[3]) ? $player->y : (is_numeric($data[3]) ? $data[2] : $player->y);
+            $z = (int) empty($data[4]) ? $player->z : (is_numeric($data[4]) ? $data[2] : $player->z);
+            if($data[9] === 0){
                 $blockType = Image::TYPE_BEDROCK_EDITION;
-            }elseif($data[7] === 1){
+            }elseif($data[9] === 1){
                 $blockType = Image::TYPE_JAVA_EDITION;
             }
             $pos = new Vector3($x, $y, $z);
-            $image = new Image($this->filename, $place, $type, $pos, $player->getName(), $rotate ?? 0, $blockType, ImageConverter::$count++, $player->level->getFolderName());
+            $image = new Image($this->filename, $place, $type ?? 'Horizontal', $pos, $player->getName(), $blockType, $player->level->getFolderName());
+            $image->setRotation($data[5]);
+            if($data[6] === 1){
+                $image->setFilter(Image::FILTER_NEGATE);
+            }
+            if($data[7] === 1){
+                $image->setFlip(Image::FLIP_HORIZONTAL);
+            }elseif($data[7] === 2){
+                $image->setFlip(Image::FLIP_VERTICAL);
+            }elseif($data[7] === 3){
+                $image->setFlip(Image::FLIP_BOTH);
+            }
             ImageConverter::addImage($image);
-            $confirm = $data[6] === 0;
+            $confirm = $data[8] === 0;
             if($confirm){
                 $player->sendMessage('§7Please wait...');
                 ImageUtility::checkArea($image);
@@ -56,11 +59,13 @@ class PreparingPlace implements Form{
     private function prepare(){
         $contents = [];
         $contents[] = ['type' => 'dropdown','text' => 'Select Type','options' => ['Horizontal', 'Vertical', 'Stair', 'Parallelogram']];
-        $contents[] = ['type' => 'dropdown','text' => 'Placement Type','options' => ['1','2','3','4']];
-        $contents[] = ['type' => 'input', 'text' => 'X Coordinates (If you want to place on your position, don\'t write)', 'placeholder' => 'Your X Coords'];
-        $contents[] = ['type' => 'input', 'text' => 'Y Coordinates (If you want to place on your position, don\'t write)', 'placeholder' => 'Your Y Coords'];
-        $contents[] = ['type' => 'input', 'text' => 'Z Coordinates (If you want to place on your position, don\'t write)', 'placeholder' => 'Your Z Coords'];
-        $contents[] = ['type' => 'dropdown','text' => 'Image Rotation','options' => ['±0', '+90', '+180', '+240']];
+        $contents[] = ['type' => 'dropdown','text' => 'Placement Type (For Stair, Parallelogram)','options' => ['1','2','3','4']];
+        $contents[] = ['type' => 'input', 'text' => 'X Coordinates (Default: Your position)', 'placeholder' => 'Your X Coords'];
+        $contents[] = ['type' => 'input', 'text' => 'Y Coordinates (Default: Your position)', 'placeholder' => 'Your Y Coords'];
+        $contents[] = ['type' => 'input', 'text' => 'Z Coordinates (Default: Your position)', 'placeholder' => 'Your Z Coords'];
+        $contents[] = ['type' => 'slider','text' => 'Image Rotation (Degree)','min' => 0, 'max' => 359];
+        $contents[] = ['type' => 'dropdown','text' => 'Image Filter','options' => ['None', 'Reverses all colors']];
+        $contents[] = ['type' => 'dropdown','text' => 'Image Flip','options' => ['None', 'Horizontal', 'Vertical', 'Horizontal and Vertical']];
         $contents[] = ['type' => 'dropdown','text' => 'Confirm Area','options' => ['Yes', 'No']];
         $contents[] = ['type' => 'dropdown','text' => 'Choose Block Id Type','options' => ['Bedrock Edition', 'Java Edition']];
         $this->contents = $contents;

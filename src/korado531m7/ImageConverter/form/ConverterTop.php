@@ -6,7 +6,7 @@ use pocketmine\Player;
 
 class ConverterTop implements Form{
     public function __construct(){
-        $this->buttons = [['text' => 'Show Converting List'],['text' => 'Completed Conversion'],['text' => 'Convert a Image']];
+        $this->buttons = [['text' => 'Show Converting List'],['text' => 'Completed Conversion'],['text' => 'Convert an Image']];
     }
     
     public function handleResponse(Player $player, $data) : void{
@@ -16,7 +16,7 @@ class ConverterTop implements Form{
                 $player->sendForm(new ConvertingList());
             break;
             
-            case 'Convert a Image':
+            case 'Convert an Image':
                 $player->sendForm(new SelectImage());
             break;
             
@@ -31,6 +31,6 @@ class ConverterTop implements Form{
     }
     
     public function jsonSerialize(){
-        return ['type' => 'form', 'title' => '§aWhat do you want to?', 'content' => '', 'buttons' => $this->buttons];
+        return ['type' => 'form', 'title' => '§aWhat would you like to do?', 'content' => '', 'buttons' => $this->buttons];
     }
 }
